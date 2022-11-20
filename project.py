@@ -34,7 +34,6 @@ import matplotlib.pyplot as plt
 # Store last 5? seconds of video, compare to templates, output matching letter
 print('about to start')
 cap = cv2.VideoCapture(0,cv2.CAP_DSHOW)
-print('got the camera you bitch')
 
 if not cap.isOpened():
     raise IOError("Cannot Open webcam")

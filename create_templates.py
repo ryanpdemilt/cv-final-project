@@ -9,8 +9,8 @@ from constants import IM_DIM, BACKGROUND_FRAMES
 frame_count = 100
 
 def get_letter(letter, cap):
-    if not os.path.exists(letter):
-        os.mkdir(letter)
+    if not os.path.exists(os.path.join(letter, 'test')):
+        os.mkdir(os.path.join(letter, 'test'))
 
     for i in range(frame_count):
         ret, frame = cap.read()
@@ -21,9 +21,9 @@ def get_letter(letter, cap):
         if c == 27:
             break
 
-        cv2.imwrite(os.path.join(letter,f'{letter}_{i}.png'), frame)
+        cv2.imwrite(os.path.join(letter,'test',f'{letter}_{i}.png'), frame)
 
-# letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
 
 letters = ['S']
