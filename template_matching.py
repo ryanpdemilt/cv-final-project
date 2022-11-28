@@ -6,11 +6,11 @@ from skimage.segmentation import slic
 from skimage.segmentation import mark_boundaries
 import os
 from tqdm import tqdm
+import sklearn.metrics as metrics
 
 WINDOW_FIELD = 50
 
 def match_image(frame, letter):
-
     template_img = plt.imread(os.path.join(letter, f'{letter}_template.png'))
 
     flattened_template = template_img.reshape(-1,template_img.shape[-1])
@@ -20,7 +20,7 @@ def match_image(frame, letter):
     window_size = template_img.shape
     windows = skimage.util.view_as_windows(frame,window_size)
     error_surface = np.zeros(windows.shape[0:2])
-    
+
     x = np.array(range(int(windows.shape[0] / 2) - WINDOW_FIELD,int(windows.shape[0] / 2) + WINDOW_FIELD,1))
     y = np.array(range(int(windows.shape[1] / 2) - WINDOW_FIELD,int(windows.shape[1] / 2) + WINDOW_FIELD,1))
     #(112, 161, 1, 145, 96, 3)
@@ -66,24 +66,32 @@ def match_image(frame, letter):
 
 def test_template_match():
     letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y']
-    accuracies = [0 for i in range(len(letters))]
+    
+    predictions = np.array([])
+    labels = np.array([])
     
     for letter_file in range(len(letters)):
         print(f'Doing letter {letters[letter_file]}')
-        for i in tqdm(range(1,100)):
-            num_match = 0
-            for letter_template in letters:
-                
-                frame = plt.imread(os.path.join(letters[letter_file],f'{letters[letter_file]}_{i}.png'))
+        for i,j in enumerate(np.random.randint(low=1, high=99, size=20)):
+            pred = -1
+            for index, letter_template in enumerate(letters):
+                print(' ' * 100, end='\r', flush=True) 
+                print(f'Example {i}/20: template {letter_template}', end='\r', flush=True)
+                frame = plt.imread(os.path.join(letters[letter_file],f'{letters[letter_file]}_{j}.png'))
                 match = match_image(frame, letter_template)
 
-                if match > 2.5:
-                    num_match = num_match + 1
+                if match >= 2.5:
+                    pred = index
+                    break
 
-        accuracies[letter_file] = num_match / 99
+            predictions = np.append(predictions, pred)
+            labels = np.append(labels, letter_file)
 
-    for l,a in zip(letters, accuracies):
-        print(f'Letter {l} identified with accuracy {a}')
+            print(' ' * 100,end='\r',flush=True) 
+        print(f'letter {letters[letter_file]} accuracy {metrics.accuracy_score(predictions[-20:], labels[-20:])}')
+
+    np.save('predictions.npy', predictions)
+    np.save('labels.npy', labels)
 
 
 test_template_match()

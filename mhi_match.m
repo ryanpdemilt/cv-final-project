@@ -20,17 +20,17 @@ for i=2:99
     diff_im(:,:,i-1) = temp_im;
 end
 
+% to test params for mhi
+% temp_im = abs(Im(:,:,2) - Im(:,:,1));
+% temp_im = temp_im > 20;
+% temp_im = bwmorph(temp_im, 'dilate');
+% temp_im = bwlabel(temp_im, 8) == 1;
 
-temp_im = abs(Im(:,:,2) - Im(:,:,1));
-temp_im = temp_im > 20;
-temp_im = bwmorph(temp_im, 'dilate');
-temp_im = bwlabel(temp_im, 8) == 1;
-
-
-figure;
-imagesc(temp_im);
-axis('image');
-colormap('gray');
+% 
+% figure;
+% imagesc(temp_im);
+% axis('image');
+% colormap('gray');
 
 %create MHI/MEI
 
@@ -49,16 +49,34 @@ axis('image');
 colormap('gray');
 
 
-figure;
-imagesc(MEI);
-axis('image');
-colormap('gray');
+% figure;
+% imagesc(MEI);
+% axis('image');
+% colormap('gray');
 
 
 MHI = max(0, (MHI-1.0)/99.0);
 
-simMEI = similitudeMoments(MEI)
-simMHI = similitudeMoments(MHI)
+simMEI = similitudeMoments(MEI);
+simMHI = similitudeMoments(MHI);
+vector = [simMEI simMHI];
+
+J_vec = [0.0692,0.0232,0.0208,-0.0131,0.2174,0.0132,0.0390,...
+    0.1304,0.0325,0.0599,-0.0167,0.5142,0.0410,0.1422];
+
+Z_vec = [0.0443, 0.0021, -0.0127, -0.0020, 0.1670, -0.0006, 0.0058, 0.1283,...    
+    0.0216, -0.0219, -0.0159, 0.4259, 0.0097, -0.0558];
+
+dist_j = sqrt(sum((vector - J_vec).^2));
+dist_z = sqrt(sum((vector - Z_vec).^2));
+
+if dist_z < dist_j
+    disp('ZZZZZZZ')
+else
+    disp('JJJJJJJ')
+end
+
+
 
 
 %% functions
